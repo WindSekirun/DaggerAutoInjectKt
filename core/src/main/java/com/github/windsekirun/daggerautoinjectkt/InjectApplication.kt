@@ -1,5 +1,7 @@
 package com.github.windsekirun.daggerautoinjectkt
 
+import kotlin.reflect.KClass
+
 /**
  * DaggerAutoInjectKt
  * Class: InjectApplication
@@ -7,6 +9,6 @@ package com.github.windsekirun.daggerautoinjectkt
  *
  * Description:
  */
-@Target(AnnotationTarget.TYPE)
+@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class InjectApplication
+annotation class InjectApplication(val component: KClass<*>)

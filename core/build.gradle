@@ -2,8 +2,8 @@ apply plugin: 'kotlin'
 
 def dagger_version = "2.21"
 
-sourceCompatibility = "8"
-targetCompatibility = "8"
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()

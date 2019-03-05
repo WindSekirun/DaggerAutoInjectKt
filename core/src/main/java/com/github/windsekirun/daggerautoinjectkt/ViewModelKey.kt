@@ -1,7 +1,6 @@
 package com.github.windsekirun.daggerautoinjectkt
 
 import dagger.MapKey
-import kotlin.reflect.KClass
 
 /**
  * DaggerAutoInjectKt
@@ -14,4 +13,4 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @MapKey
-annotation class ViewModelKey(val value: KClass<*>)
+annotation class ViewModelKey(val value: String)

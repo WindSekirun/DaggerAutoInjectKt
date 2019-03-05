@@ -15,12 +15,12 @@ import javax.inject.Inject
 class MainActivity : BaseActivity() {
 
     @Inject lateinit var sharedPreferences: SharedPreferences
-//    @Inject lateinit var viewModelProvideFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelProvideFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        val viewModel = ViewModelProviders.of(this, viewModelProvideFactory).get(MainViewModel::class.java)
+        val viewModel = ViewModelProviders.of(this, viewModelProvideFactory).get(MainViewModel::class.java)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, MainFragment.newInstance())

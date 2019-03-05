@@ -1,8 +1,9 @@
 package com.github.windsekirun.daggerautoinjectkt.viewmodel
 
-
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import com.github.windsekirun.daggerautoinjectkt.InjectViewModel
+import com.github.windsekirun.daggerautoinjectkt.MainApplication
+import javax.inject.Inject
 
 /**
  * DaggerAutoInject
@@ -14,4 +15,4 @@ import com.github.windsekirun.daggerautoinjectkt.InjectViewModel
  */
 
 @InjectViewModel
-class MainViewModel : ViewModel()
+class MainViewModel @Inject constructor(application: MainApplication) : AndroidViewModel(application)

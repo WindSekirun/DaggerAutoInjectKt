@@ -41,7 +41,7 @@ open class ApplicationCompiler {
                 " application.registerActivityLifecycleCallbacks(object : %T.ActivityLifecycleCallbacks",
                 application
             )
-            .beginControlFlow("override fun onActivityPaused(activity: %T?)", activity)
+            .beginControlFlow("override fun onActivityCreated(activity: Activity?, p1: Bundle?)", activity)
             .addStatement("if (activity != null) handleActivity(activity)")
             .endControlFlow()
             .addStatement("override fun onActivityResumed(p0: Activity?) {}")
@@ -49,7 +49,7 @@ open class ApplicationCompiler {
             .addStatement("override fun onActivityDestroyed(p0: Activity?) {}")
             .addStatement("override fun onActivitySaveInstanceState(p0: Activity?, p1: %T?) {}", bundle)
             .addStatement("override fun onActivityStopped(p0: Activity?) {}")
-            .addStatement("override fun onActivityCreated(p0: Activity?, p1: Bundle?) {}")
+            .addStatement("override fun onActivityPaused(p0: Activity?) {}")
             .addStatement("})")
 
         typeBuilder.addFunction(initSpec.build())

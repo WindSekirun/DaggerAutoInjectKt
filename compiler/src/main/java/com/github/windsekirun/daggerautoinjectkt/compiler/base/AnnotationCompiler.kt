@@ -1,6 +1,6 @@
 package com.github.windsekirun.daggerautoinjectkt.compiler.base
 
-import com.github.windsekirun.daggerautoinjectkt.AutoInjectCompiler
+import com.github.windsekirun.daggerautoinjectkt.Constants
 import com.github.windsekirun.daggerautoinjectkt.holder.AnnotationHolder
 import com.squareup.kotlinpoet.*
 import java.io.File
@@ -37,7 +37,7 @@ open class AnnotationCompiler {
             .addType(newType)
             .build()
 
-        val generatedDir = env.options[AutoInjectCompiler.KAPT_KOTLIN_GENERATED_OPTION_NAME]
+        val generatedDir = env.options[Constants.KAPT_KOTLIN_GENERATED_OPTION_NAME]
         fileSpec.writeTo(File(generatedDir, "$className.kt"))
     }
 

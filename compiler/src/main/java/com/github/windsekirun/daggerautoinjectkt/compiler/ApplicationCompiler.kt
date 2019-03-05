@@ -1,6 +1,6 @@
 package com.github.windsekirun.daggerautoinjectkt.compiler
 
-import com.github.windsekirun.daggerautoinjectkt.AutoInjectCompiler
+import com.github.windsekirun.daggerautoinjectkt.Constants
 import com.github.windsekirun.daggerautoinjectkt.asClassName
 import com.github.windsekirun.daggerautoinjectkt.holder.ApplicationHolder
 import com.squareup.kotlinpoet.*
@@ -90,7 +90,7 @@ open class ApplicationCompiler {
             .addType(typeBuilder.build())
             .build()
 
-        val generatedDir = env.options[AutoInjectCompiler.KAPT_KOTLIN_GENERATED_OPTION_NAME]
+        val generatedDir = env.options[Constants.KAPT_KOTLIN_GENERATED_OPTION_NAME]
         fileSpec.writeTo(File(generatedDir, "$className.kt"))
     }
 

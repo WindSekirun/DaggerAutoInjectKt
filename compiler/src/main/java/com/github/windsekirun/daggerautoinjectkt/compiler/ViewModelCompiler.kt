@@ -1,6 +1,6 @@
 package com.github.windsekirun.daggerautoinjectkt.compiler
 
-import com.github.windsekirun.daggerautoinjectkt.AutoInjectCompiler
+import com.github.windsekirun.daggerautoinjectkt.Constants
 import com.github.windsekirun.daggerautoinjectkt.ViewModelKey
 import com.github.windsekirun.daggerautoinjectkt.holder.AnnotationHolder
 import com.squareup.kotlinpoet.*
@@ -47,7 +47,7 @@ open class ViewModelCompiler {
             .addType(newType)
             .build()
 
-        val generatedDir = env.options[AutoInjectCompiler.KAPT_KOTLIN_GENERATED_OPTION_NAME]
+        val generatedDir = env.options[Constants.KAPT_KOTLIN_GENERATED_OPTION_NAME]
         fileSpec.writeTo(File(generatedDir, "$className.kt"))
     }
 

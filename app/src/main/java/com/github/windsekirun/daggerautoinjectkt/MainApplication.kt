@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.ContentProvider
 import com.github.windsekirun.daggerautoinjectkt.di.AppComponent
+import com.github.windsekirun.daggerautoinjectkt.di.DaggerAppComponent
 import dagger.android.*
 import javax.inject.Inject
 

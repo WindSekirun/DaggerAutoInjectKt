@@ -24,7 +24,7 @@ open class ViewModelCompiler {
             val typeName = it.classNameComplete
             val parameterName = it.className[0].toLowerCase() + it.className.substring(1)
             val keyAnnotation = AnnotationSpec.builder(ViewModelKey::class)
-                .addMember("value", "${it.className}.class")
+                .addMember("value = %L", "${it.className}::class")
                 .build()
 
             FunSpec.builder("bind_${it.className}")

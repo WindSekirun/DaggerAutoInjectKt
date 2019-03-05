@@ -30,7 +30,7 @@ class MainApplication : Application(), HasActivityInjector, HasServiceInjector, 
             .application(this)
             .build()
 
-        DaggerAutoInject.init(this, appComponent)
+        DaggerAutoInject.init(this, appComponent!!)
     }
 
     override fun activityInjector(): DispatchingAndroidInjector<Activity>? {

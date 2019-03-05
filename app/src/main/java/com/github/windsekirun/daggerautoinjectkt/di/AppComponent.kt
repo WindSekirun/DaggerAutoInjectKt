@@ -1,6 +1,6 @@
 package com.github.windsekirun.daggerautoinjectkt.di
 
-import com.github.windsekirun.daggerautoinjectkt.MainApplication
+import com.github.windsekirun.daggerautoinjectkt.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule
@@ -9,7 +9,8 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = [AndroidSupportInjectionModule::class, ActivityModule::class, FragmentModule::class, ViewModelModule::class, ServiceModule::class]
+    modules = [AndroidSupportInjectionModule::class, ActivityModule::class, FragmentModule::class,
+        ViewModelModule::class, ServiceModule::class, BroadcastRecevierModule::class, ContentProviderModule::class]
 )
 interface AppComponent {
     @Component.Builder

@@ -20,10 +20,13 @@ open class ApplicationCompiler {
     open val className: String = "DaggerAutoInject"
 
     fun construct(env: ProcessingEnvironment, holder: ApplicationHolder) {
-        val typeBuilder = TypeSpec.classBuilder(className)
+        val typeBuilder = TypeSpec.objectBuilder(className)
             .addModifiers(KModifier.PUBLIC)
-            .addProperty(PropertySpec.builder("TAG", stringClass, KModifier.FINAL, KModifier.PUBLIC).build())
-            .addFunction(FunSpec.constructorBuilder().addModifiers(KModifier.PRIVATE).build())
+            .addProperty(
+                PropertySpec.builder("TAG", stringClass, KModifier.FINAL, KModifier.PUBLIC)
+                    .initializer("\"$className\"")
+                    .build()
+            )
 
         val component =
             holder.componentClass?.asClassName() ?: throw IllegalStateException("Cannot find component class")
@@ -33,85 +36,53 @@ open class ApplicationCompiler {
             .addAnnotation(JvmStatic::class)
             .addParameter("application", holder.classNameComplete)
             .addParameter("component", component)
-            .addStatement("\$L.inject(\$L)", "component", "application")
-            .addStatement(
-                "application.registerActivityLifecycleCallbacks(new \$T.ActivityLifecycleCallbacks() {\n" +
-                        "            @Override\n" +
-                        "            public void onActivityCreated(\$T activity, \$T savedInstanceState) {\n" +
-                        "                " + "handleActivity" + "(activity);\n" +
-                        "            }\n" +
-                        "\n" +
-                        "            @Override\n" +
-                        "            public void onActivityStarted(Activity activity) {\n" +
-                        "\n" +
-                        "            }\n" +
-                        "\n" +
-                        "            @Override\n" +
-                        "            public void onActivityResumed(Activity activity) {\n" +
-                        "\n" +
-                        "            }\n" +
-                        "\n" +
-                        "            @Override\n" +
-                        "            public void onActivityPaused(Activity activity) {\n" +
-                        "\n" +
-                        "            }\n" +
-                        "\n" +
-                        "            @Override\n" +
-                        "            public void onActivityStopped(Activity activity) {\n" +
-                        "\n" +
-                        "            }\n" +
-                        "\n" +
-                        "            @Override\n" +
-                        "            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {\n" +
-                        "\n" +
-                        "            }\n" +
-                        "\n" +
-                        "            @Override\n" +
-                        "            public void onActivityDestroyed(Activity activity) {\n" +
-                        "\n" +
-                        "            }\n" +
-                        "        });",
-
-                application,
-                activity,
-                bundle
+            .addStatement("%N.inject(%N)", "component", "application")
+            .beginControlFlow(
+                " application.registerActivityLifecycleCallbacks(object : %T.ActivityLifecycleCallbacks",
+                application
             )
+            .beginControlFlow("override fun onActivityPaused(activity: %T?)", activity)
+            .addStatement("if (activity != null) handleActivity(activity)")
+            .endControlFlow()
+            .addStatement("override fun onActivityResumed(p0: Activity?) {}")
+            .addStatement("override fun onActivityStarted(p0: Activity?) {}")
+            .addStatement("override fun onActivityDestroyed(p0: Activity?) {}")
+            .addStatement("override fun onActivitySaveInstanceState(p0: Activity?, p1: %T?) {}", bundle)
+            .addStatement("override fun onActivityStopped(p0: Activity?) {}")
+            .addStatement("override fun onActivityCreated(p0: Activity?, p1: Bundle?) {}")
+            .addStatement("})")
 
         typeBuilder.addFunction(initSpec.build())
 
         val handleSpec = FunSpec.builder("handleActivity")
-            .addModifiers(KModifier.PROTECTED)
+            .addModifiers(KModifier.PRIVATE)
             .addAnnotation(JvmStatic::class.java)
             .addParameter("activity", activity)
-            .addCode(
-                "try {\n" +
-                        "            \$T.inject(activity);\n" +
-                        "        } catch (Exception e){\n" +
-                        "            \$T.d(TAG, activity.getClass().toString()+\" non injected\");\n" +
-                        "        }\n" +
-                        "        if (activity instanceof \$T) {\n" +
-                        "            final \$T supportFragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();\n" +
-                        "            supportFragmentManager.registerFragmentLifecycleCallbacks(\n" +
-                        "                    new FragmentManager.FragmentLifecycleCallbacks() {\n" +
-                        "                        @Override\n" +
-                        "                        public void onFragmentCreated(FragmentManager fm, \$T f, \$T savedInstanceState) {\n" +
-                        "                            try {\n" +
-                        "                                \$T.inject(f);\n" +
-                        "                            } catch (Exception e){\n" +
-                        "                                Log.d(TAG, f.getClass().toString()+\" non injected\");\n" +
-                        "                            }\n" +
-                        "                        }\n" +
-                        "                    }, true);\n" +
-                        "        }",
-
-                androidInjection,
-                log,
-                fragmentActivity,
-                fragmentManager,
-                fragment,
-                bundle,
-                supportInjection
+            .beginControlFlow("try")
+            .addStatement("%T.inject(activity)", androidInjection)
+            .endControlFlow()
+            .beginControlFlow("catch (e: Exception)")
+            .addStatement("%T.d(TAG, \"\${activity.javaClass.toString()} non injected\")", log)
+            .endControlFlow()
+            .beginControlFlow("if (activity is %T)", fragmentActivity)
+            .addStatement("val manager = activity.supportFragmentManager")
+            .beginControlFlow(
+                "manager.registerFragmentLifecycleCallbacks(object : %T.FragmentLifecycleCallbacks()",
+                fragmentManager
             )
+            .beginControlFlow(
+                "override fun onFragmentCreated(fm: FragmentManager, f: %T, savedInstanceState: Bundle?)",
+                fragment
+            )
+            .beginControlFlow("try")
+            .addStatement("%T.inject(f)", supportInjection)
+            .endControlFlow()
+            .beginControlFlow("catch (e: Exception)")
+            .addStatement("%T.d(TAG, \"\${f.javaClass.toString()} non injected\")", log)
+            .endControlFlow()
+            .endControlFlow()
+            .addStatement("}, true)")
+            .endControlFlow()
 
         typeBuilder.addFunction(handleSpec.build())
 
@@ -124,7 +95,7 @@ open class ApplicationCompiler {
     }
 
     companion object {
-        val stringClass = String::class.java.asClassName()
+        val stringClass = String::class.asClassName()
         val application = ClassName.bestGuess("android.app.Application")
         val activity = ClassName.bestGuess("android.app.Activity")
         val bundle = ClassName.bestGuess("android.os.Bundle")

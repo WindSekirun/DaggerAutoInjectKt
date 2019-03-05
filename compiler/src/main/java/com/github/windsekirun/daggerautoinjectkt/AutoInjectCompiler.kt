@@ -22,9 +22,11 @@ class AutoInjectCompiler : AbstractProcessor() {
     private val investTarget = InvestTarget()
 
     override fun process(annotations: MutableSet<out TypeElement>?, env: RoundEnvironment?): Boolean {
-        investAnnotations(env)
-        if (investTarget.isInitialized()) {
-            constructClass()
+        if (env != null && !env.errorRaised() && !env.processingOver()) {
+            investAnnotations(env)
+            if (investTarget.isInitialized()) {
+                constructClass()
+            }
         }
         return true
     }

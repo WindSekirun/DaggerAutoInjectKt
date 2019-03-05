@@ -32,6 +32,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.core:core-ktx:1.0.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    
+    implementation project(':core')
+    kapt project(':compiler')
 
     //dagger2
     implementation "com.google.dagger:dagger:$dagger_version"
@@ -40,8 +43,4 @@ dependencies {
 
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
-
-    implementation project(':core')
-    kapt project(':compiler')
-
 }

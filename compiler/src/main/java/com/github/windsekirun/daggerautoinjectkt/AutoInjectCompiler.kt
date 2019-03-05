@@ -2,6 +2,7 @@ package com.github.windsekirun.daggerautoinjectkt
 
 import com.github.windsekirun.daggerautoinjectkt.compiler.*
 import com.github.windsekirun.daggerautoinjectkt.compiler.data.InvestTarget
+import com.github.windsekirun.daggerautoinjectkt.holder.ApplicationHolder
 import com.google.auto.service.AutoService
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
@@ -22,12 +23,8 @@ class AutoInjectCompiler : AbstractProcessor() {
     private val investTarget = InvestTarget()
 
     override fun process(annotations: MutableSet<out TypeElement>?, env: RoundEnvironment?): Boolean {
-        if (env != null && !env.errorRaised() && !env.processingOver()) {
-            investAnnotations(env)
-            if (investTarget.isInitialized()) {
-                constructClass()
-            }
-        }
+        investAnnotations(env)
+        constructClass()
         return true
     }
 
@@ -46,13 +43,15 @@ class AutoInjectCompiler : AbstractProcessor() {
     }
 
     private fun constructClass() {
+        val applicationHolder = investTarget.applicationHolder ?: return
+
         ActivityCompiler().construct(processingEnv, investTarget.activityHolder)
         ServiceCompiler().construct(processingEnv, investTarget.serviceHolder)
         FragmentCompiler().construct(processingEnv, investTarget.fragmentHolder)
         BroadcastReceiverCompiler().construct(processingEnv, investTarget.broadcastHolder)
         ContentProviderCompiler().construct(processingEnv, investTarget.contentHolder)
         ViewModelCompiler().construct(processingEnv, investTarget.viewModelHolder)
-        ApplicationCompiler().construct(processingEnv, investTarget.applicationHolder)
+        ApplicationCompiler().construct(processingEnv, applicationHolder)
 
         investTarget.clear()
     }

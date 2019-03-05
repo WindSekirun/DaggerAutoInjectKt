@@ -24,12 +24,7 @@ class InvestTarget {
     val broadcastHolder = mutableSetOf<AnnotationHolder>()
     val contentHolder = mutableSetOf<AnnotationHolder>()
 
-    val applicationHolder: ApplicationHolder
-        get() {
-            return _applicationHolder ?: throw NullPointerException("Not initialized")
-        }
-
-    private var _applicationHolder: ApplicationHolder? = null
+    var applicationHolder: ApplicationHolder? = null
 
     fun invest(env: RoundEnvironment) {
         activityHolder.addAll(this.investInternal(InjectActivity::class, env))
@@ -39,7 +34,7 @@ class InvestTarget {
         broadcastHolder.addAll(this.investInternal(InjectBroadcastReceiver::class, env))
         contentHolder.addAll(this.investInternal(InjectContentProvider::class, env))
 
-        _applicationHolder = env.getElementsAnnotatedWith(InjectApplication::class.java)
+        applicationHolder = env.getElementsAnnotatedWith(InjectApplication::class.java)
             .map {
                 ApplicationHolder(it, (it as TypeElement).asClassName(), it.simpleName.toString()).apply {
                     val component = it.getAnnotation(InjectApplication::class.java).getComponent()
@@ -48,8 +43,6 @@ class InvestTarget {
             }.firstOrNull()
     }
 
-    fun isInitialized() = _applicationHolder != null
-
     fun clear() {
         activityHolder.clear()
         fragmentHolder.clear()
@@ -57,7 +50,7 @@ class InvestTarget {
         serviceHolder.clear()
         broadcastHolder.clear()
         contentHolder.clear()
-        _applicationHolder = null
+        applicationHolder = null
     }
 
     private fun <T : Annotation> investInternal(cls: KClass<T>, env: RoundEnvironment): Set<AnnotationHolder> =

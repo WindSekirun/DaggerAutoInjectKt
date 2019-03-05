@@ -7,6 +7,6 @@ package com.github.windsekirun.daggerautoinjectkt
  *
  * Description:
  */
-@Target(AnnotationTarget.TYPE)
+@Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 annotation class InjectViewModel

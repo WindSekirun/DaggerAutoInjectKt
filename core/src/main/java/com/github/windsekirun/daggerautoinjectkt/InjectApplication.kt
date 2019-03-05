@@ -9,6 +9,6 @@ import kotlin.reflect.KClass
  *
  * Description:
  */
-@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 annotation class InjectApplication(val component: KClass<*>)

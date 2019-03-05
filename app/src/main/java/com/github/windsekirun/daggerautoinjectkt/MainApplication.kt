@@ -3,20 +3,25 @@ package com.github.windsekirun.daggerautoinjectkt
 import android.app.Activity
 import android.app.Application
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.ContentProvider
 import com.github.windsekirun.daggerautoinjectkt.di.AppComponent
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import dagger.android.HasServiceInjector
+import dagger.android.*
 import javax.inject.Inject
 
 
 @InjectApplication(component = AppComponent::class)
-class MainApplication : Application(), HasActivityInjector, HasServiceInjector {
+class MainApplication : Application(), HasActivityInjector, HasServiceInjector, HasBroadcastReceiverInjector,
+    HasContentProviderInjector {
+
     @Inject
     lateinit var activityDispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
     @Inject
     lateinit var serviceDispatchingAndroidInjector: DispatchingAndroidInjector<Service>
+    @Inject
+    lateinit var broadDispatchingAndroidInjector: DispatchingAndroidInjector<BroadcastReceiver>
+    @Inject
+    lateinit var contentDispatchingAndroidInjector: DispatchingAndroidInjector<ContentProvider>
 
     override fun onCreate() {
         super.onCreate()
@@ -34,6 +39,14 @@ class MainApplication : Application(), HasActivityInjector, HasServiceInjector {
 
     override fun serviceInjector(): AndroidInjector<Service>? {
         return serviceDispatchingAndroidInjector
+    }
+
+    override fun broadcastReceiverInjector(): AndroidInjector<BroadcastReceiver> {
+        return broadDispatchingAndroidInjector
+    }
+
+    override fun contentProviderInjector(): AndroidInjector<ContentProvider> {
+        return contentDispatchingAndroidInjector
     }
 
     companion object {
